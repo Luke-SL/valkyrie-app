@@ -1,0 +1,9 @@
+services:
+  valkyrie-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: valkyrie-app
+    restart: unless-stopped
+    ports:
+      - '9002:80'
