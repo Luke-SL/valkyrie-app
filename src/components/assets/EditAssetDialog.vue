@@ -19,33 +19,23 @@
       </q-card-section>
 
       <q-card-section>
-        <q-form @submit.prevent="submitForm" class="q-gutter-md q-mt-xs">
-          <!-- O número de identificação e categoria não devem ser alterados na edição -->
-          <div class="text-subtitle2 text-grey-7 q-mb-md">
-            Identificação: {{ asset?.patrimony_number }} | Categoria:
-            {{ asset?.category?.toUpperCase() }}
+        <div class="text-caption text-grey-6 q-mb-md">
+          Identificação: <strong>{{ form.patrimony_number }}</strong> |
+          Categoria: <strong>{{ form.category?.toUpperCase() }}</strong>
+        </div>
+
+        <q-form @submit.prevent="submitForm" class="q-gutter-y-md">
+          <!-- Linha corrigida: q-gutter-x-md direto nos q-inputs com classe col -->
+          <div class="row q-gutter-x-md">
+            <q-input v-model="form.brand" label="Marca" outlined class="col" />
+            <q-input v-model="form.model" label="Modelo" outlined class="col" />
           </div>
 
-          <div class="row q-col-gutter-md">
-            <!-- Correção da Borda -->
-            <div class="row q-gutter-x-md">
-              <q-input
-                v-model="form.brand"
-                label="Marca"
-                outlined
-                class="col"
-              />
-              <q-input
-                v-model="form.model"
-                label="Modelo"
-                outlined
-                class="col"
-              />
-            </div>
-          </div>
-
+          <!-- Campos dinâmicos conforme a categoria -->
           <q-select
-            v-if="asset?.category === 'computador'"
+            v-if="
+              form.category === 'computador' || form.category === 'notebook'
+            "
             v-model="form.os_installed"
             :options="osOptions"
             label="Sistema(s) Operacional(is)"
@@ -55,7 +45,7 @@
           />
 
           <q-select
-            v-if="asset?.category === 'projetor multimídia'"
+            v-if="form.category === 'projetor multimídia'"
             v-model="form.supported_connections"
             :options="connectionOptions"
             label="Conexões Suportadas"
@@ -93,7 +83,11 @@ import { reactive, watch, ref } from 'vue'
 import { useValkyrie } from '/src/composables/useValkyrie'
 import { useQuasar } from 'quasar'
 
-const props = defineProps({ modelValue: Boolean, asset: Object })
+const props = defineProps({
+  modelValue: Boolean,
+  asset: { type: Object, default: null }
+})
+
 const emit = defineEmits(['update:modelValue', 'updated'])
 
 const $q = useQuasar()
@@ -110,19 +104,25 @@ const osOptions = [
 const connectionOptions = ['HDMI', 'VGA', 'Wireless']
 
 const form = reactive({
+  id: '',
+  patrimony_number: '',
+  category: '',
   brand: '',
   model: '',
   os_installed: [],
   supported_connections: [],
   notes: ''
 })
+
 const loading = ref(false)
 
-// Preenche o formulário com os dados do equipamento ao abrir o modal
 watch(
   () => props.modelValue,
   newVal => {
     if (newVal && props.asset) {
+      form.id = props.asset.id
+      form.patrimony_number = props.asset.patrimony_number
+      form.category = props.asset.category
       form.brand = props.asset.brand || ''
       form.model = props.asset.model || ''
       form.os_installed = props.asset.os_installed
@@ -139,13 +139,20 @@ watch(
 const submitForm = async () => {
   loading.value = true
   try {
-    await updateAsset(props.asset.id, {
-      brand: form.brand,
-      model: form.model,
-      os_installed: form.os_installed,
-      supported_connections: form.supported_connections,
-      notes: form.notes
+    await updateAsset(form.id, {
+      brand: form.brand.trim() || 'Genérico',
+      model: form.model ? form.model.trim() : null,
+      os_installed:
+        form.category === 'computador' || form.category === 'notebook'
+          ? form.os_installed
+          : [],
+      supported_connections:
+        form.category === 'projetor multimídia'
+          ? form.supported_connections
+          : [],
+      notes: form.notes ? form.notes.trim() : null
     })
+
     $q.notify({
       type: 'positive',
       message: 'Equipamento atualizado com sucesso!'
