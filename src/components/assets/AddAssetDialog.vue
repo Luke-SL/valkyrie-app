@@ -160,6 +160,7 @@ const { addAsset } = useValkyrie()
 
 const categories = [
   'access point',
+  'armário',
   'cadeira',
   'câmera de segurança',
   'computador',
