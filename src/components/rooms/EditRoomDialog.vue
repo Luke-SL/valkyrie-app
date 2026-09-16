@@ -20,7 +20,6 @@
 
       <q-card-section>
         <q-form @submit.prevent="submitForm" class="q-gutter-y-md q-mt-xs">
-          <!-- Correção da Borda: Inputs diretos na linha com a classe 'col' -->
           <div class="row q-gutter-x-md">
             <q-input
               v-model="form.name"
@@ -38,7 +37,6 @@
             />
           </div>
 
-          <!-- Bloqueado para Staff -->
           <q-select
             v-model="form.category"
             :options="roomCategories"
@@ -99,7 +97,7 @@ const emit = defineEmits(['update:modelValue', 'updated'])
 
 const $q = useQuasar()
 const { updateRoom } = useValkyrie()
-const { userRole } = useAuth() // Pega a permissão real do usuário
+const { userRole } = useAuth()
 
 const roomCategories = [
   'administração',
@@ -107,7 +105,8 @@ const roomCategories = [
   'laboratório',
   'auditório',
   'sala de estudos',
-  'depósito'
+  'depósito',
+  'corredor'
 ]
 
 const form = reactive({
@@ -120,7 +119,6 @@ const form = reactive({
 })
 const loading = ref(false)
 
-// Preenche o formulário com os dados da sala ao abrir
 watch(
   () => props.modelValue,
   newVal => {
@@ -141,8 +139,8 @@ const submitForm = async () => {
   loading.value = true
   try {
     await updateRoom(form.id, {
-      name: form.name,
-      block: form.block,
+      name: form.name.trim(),
+      block: form.block.trim(),
       category: form.category,
       connections: form.connections,
       notes: form.notes

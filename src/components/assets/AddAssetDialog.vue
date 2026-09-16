@@ -13,7 +13,9 @@
       "
     >
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-weight-bold">Adicionar Equipamento</div>
+        <div class="text-h6 text-weight-bold"
+          >Adicionar Equipamento / Utensílio</div
+        >
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
@@ -42,7 +44,7 @@
             />
           </div>
 
-          <!-- Patrimônio (Mantém a máscara de 10 dígitos) -->
+          <!-- Campo: Patrimônio (10 dígitos) -->
           <q-input
             v-if="idType === 'patrimony'"
             v-model="form.patrimony_number"
@@ -56,7 +58,7 @@
             ]"
           />
 
-          <!-- Número de Série (Livre) -->
+          <!-- Campo: Nº de Série -->
           <q-input
             v-if="idType === 'serial'"
             v-model="form.patrimony_number"
@@ -65,15 +67,16 @@
             :rules="[val => !!val || 'Obrigatório']"
           />
 
-          <!-- Gerar Automático (Aviso Visual) -->
+          <!-- Aviso de Identificador Automático -->
           <div
             v-if="idType === 'auto'"
             class="bg-blue-1 text-primary q-pa-md rounded-borders text-center text-weight-medium"
           >
             <q-icon name="auto_awesome" size="sm" class="q-mr-sm" />
-            Um código único (VALK-XXXXXX) será gerado ao salvar.
+            Um código único (VALK-XXXXXX) será gerado automaticamente.
           </div>
 
+          <!-- Categoria de Ativos com os novos utensílios -->
           <q-select
             v-model="form.category"
             :options="categories"
@@ -82,18 +85,18 @@
             :rules="[val => !!val || 'Categoria é obrigatória']"
           />
 
-          <!-- Correção da Borda: Usando q-gutter-x-md com col -->
           <div class="row q-gutter-x-md">
             <q-input
               v-model="form.brand"
               label="Marca"
               outlined
-              placeholder="Ex: Epson, Genérico"
+              placeholder="Ex: Intelbras, Epson, Genérico"
               class="col"
             />
             <q-input v-model="form.model" label="Modelo" outlined class="col" />
           </div>
 
+          <!-- Campos dinâmicos dependentes da categoria -->
           <q-select
             v-if="form.category === 'computador'"
             v-model="form.os_installed"
@@ -163,7 +166,10 @@ const categories = [
   'quadro de vidro',
   'quadro interativo',
   'tela de projeção',
-  'cadeira'
+  'cadeira',
+  'access point',
+  'extintor de incêndio',
+  'câmera de segurança'
 ]
 const osOptions = [
   'Windows 10',

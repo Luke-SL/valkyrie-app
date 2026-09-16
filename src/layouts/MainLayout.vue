@@ -1,12 +1,13 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <!-- Header -->
+    <!-- Header Principal -->
     <q-header
       :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-white text-grey-9'"
       class="q-py-xs"
       bordered
     >
       <q-toolbar>
+        <!-- Botão Hambúrguer Mobile -->
         <q-btn
           flat
           dense
@@ -16,13 +17,14 @@
           class="lt-md q-mr-sm"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
+
         <div
           class="row items-center cursor-pointer text-primary text-weight-bold text-h6"
           @click="router.push('/')"
         >
           <q-img
             src="images/crow.png"
-            style="width: 42px; height: 42px"
+            style="width: 38px; height: 38px"
             :style="
               $q.dark.isActive ? 'filter: invert(1) brightness(1.8);' : ''
             "
@@ -34,13 +36,14 @@
 
         <q-space />
 
+        <!-- Barra de Busca Desktop (Oculta no mobile) -->
         <q-input
           dense
           outlined
           v-model="search"
           placeholder="Buscar salas, patrimônios..."
-          class="q-ml-md"
-          style="min-width: 300px"
+          class="q-ml-md gt-xs"
+          style="min-width: 280px"
           :bg-color="$q.dark.isActive ? 'dark-page' : 'grey-2'"
         >
           <template v-slot:prepend>
@@ -48,25 +51,66 @@
           </template>
         </q-input>
 
-        <q-space />
+        <q-space class="gt-xs" />
 
-        <!-- Botão de Alternar Modo Escuro / Claro -->
+        <!-- Ícone de Lupa para Mobile (Abre a barra retrátil) -->
+        <q-btn
+          flat
+          round
+          dense
+          icon="search"
+          class="lt-sm q-mr-xs"
+          @click="showMobileSearch = true"
+        />
+
+        <!-- Alternador Dark/Light Mode -->
         <q-btn
           flat
           round
           dense
           :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
           @click="toggleDarkMode"
-        >
-          <q-tooltip>{{
-            $q.dark.isActive ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'
-          }}</q-tooltip>
-        </q-btn>
+        />
       </q-toolbar>
+
+      <!-- Barra de Pesquisa Retrátil para Mobile -->
+      <q-slide-transition>
+        <div
+          v-if="showMobileSearch"
+          v-touch-swipe.up="() => (showMobileSearch = false)"
+          class="q-px-md q-py-sm"
+          :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-grey-2'"
+        >
+          <q-input
+            ref="mobileInputRef"
+            dense
+            outlined
+            autofocus
+            v-model="search"
+            placeholder="Buscar salas, patrimônios..."
+            :bg-color="$q.dark.isActive ? 'dark' : 'white'"
+            @keyup.enter="showMobileSearch = false"
+            @keyup.esc="showMobileSearch = false"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+            <template v-slot:append>
+              <q-btn
+                flat
+                round
+                dense
+                icon="close"
+                size="sm"
+                @click="showMobileSearch = false"
+              />
+            </template>
+          </q-input>
+        </div>
+      </q-slide-transition>
     </q-header>
 
     <!-- Menu Lateral -->
-    <!-- Conectado via v-model -->
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -74,7 +118,6 @@
       :class="$q.dark.isActive ? 'bg-dark' : 'bg-white'"
     >
       <q-list class="q-mt-md">
-        <!-- Dashboard -->
         <q-item
           clickable
           v-ripple
@@ -91,7 +134,6 @@
           <q-item-section>Dashboard</q-item-section>
         </q-item>
 
-        <!-- Salas & Locais -->
         <q-item
           clickable
           v-ripple
@@ -108,7 +150,6 @@
           <q-item-section>Salas & Locais</q-item-section>
         </q-item>
 
-        <!-- Patrimônios -->
         <q-item
           clickable
           v-ripple
@@ -126,7 +167,6 @@
         </q-item>
       </q-list>
 
-      <!-- Rodapé do Menu (Perfil e Logout alinhados) -->
       <div class="absolute-bottom q-pa-md border-top column q-gutter-y-sm">
         <q-item class="q-pa-none">
           <q-item-section avatar>
@@ -166,8 +206,11 @@
       </div>
     </q-drawer>
 
-    <!-- Conteúdo das Páginas -->
-    <q-page-container :class="$q.dark.isActive ? 'bg-dark-page' : 'bg-grey-1'">
+    <!-- Container Principal (Clica aqui para fechar a busca mobile se estiver aberta) -->
+    <q-page-container
+      :class="$q.dark.isActive ? 'bg-dark-page' : 'bg-grey-1'"
+      @click="showMobileSearch = false"
+    >
       <router-view />
     </q-page-container>
   </q-layout>
@@ -182,16 +225,16 @@ import { useAuth } from '/src/composables/useAuth'
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
-const search = ref('')
 
+const search = ref('')
 const leftDrawerOpen = ref(false)
+const showMobileSearch = ref(false)
+const mobileInputRef = ref(null)
 
 const { currentUser, userRole, logout, checkSession } = useAuth()
 
 onMounted(async () => {
-  // Define o Modo Escuro como padrão da aplicação
   $q.dark.set(true)
-
   const session = await checkSession()
   if (!session) {
     router.push('/login')

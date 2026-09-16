@@ -19,20 +19,18 @@
       </q-card-section>
 
       <q-card-section>
-        <!-- Trocamos para q-gutter-y-md para espaçamento vertical uniforme -->
         <q-form @submit.prevent="submitForm" class="q-gutter-y-md q-mt-xs">
-          <!-- Correção da Borda: Usando q-gutter-x-md com a classe col -->
           <div class="row q-gutter-x-md">
             <q-input
               v-model="form.name"
-              label="Nome da Sala (Ex: A1)"
+              label="Nome da Sala (Ex: A1, Corredor 1)"
               outlined
               class="col"
               :rules="[val => !!val || 'Obrigatório']"
             />
             <q-input
               v-model="form.block"
-              label="Bloco (Ex: A)"
+              label="Bloco (Ex: A, Corredor Central)"
               outlined
               class="col"
               :rules="[val => !!val || 'Obrigatório']"
@@ -97,7 +95,8 @@ const roomCategories = [
   'laboratório',
   'auditório',
   'sala de estudos',
-  'depósito'
+  'depósito',
+  'corredor'
 ]
 
 const getInitialState = () => ({
@@ -121,8 +120,8 @@ const submitForm = async () => {
   loading.value = true
   try {
     await createRoom({
-      name: form.name,
-      block: form.block.toUpperCase(), // Padroniza o bloco
+      name: form.name.trim(),
+      block: form.block.trim(),
       category: form.category,
       connections: form.connections,
       notes: form.notes
