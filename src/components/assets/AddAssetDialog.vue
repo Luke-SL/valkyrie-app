@@ -97,8 +97,11 @@
           </div>
 
           <!-- Campos dinâmicos dependentes da categoria -->
+          <!-- Exibir campo de OS tanto para computador de mesa quanto para notebook -->
           <q-select
-            v-if="form.category === 'computador'"
+            v-if="
+              form.category === 'computador' || form.category === 'notebook'
+            "
             v-model="form.os_installed"
             :options="osOptions"
             label="Sistema(s) Operacional(is)"
@@ -156,20 +159,23 @@ const $q = useQuasar()
 const { addAsset } = useValkyrie()
 
 const categories = [
-  'condicionador de ar',
+  'access point',
+  'cadeira',
+  'câmera de segurança',
   'computador',
-  'monitor',
+  'condicionador de ar',
   'criado mudo',
+  'extintor de incêndio',
+  'filtro de água',
+  'impressora',
   'mesa',
+  'monitor',
+  'notebook',
   'projetor multimídia',
   'quadro branco',
   'quadro de vidro',
   'quadro interativo',
-  'tela de projeção',
-  'cadeira',
-  'access point',
-  'extintor de incêndio',
-  'câmera de segurança'
+  'tela de projeção'
 ]
 const osOptions = [
   'Windows 10',
@@ -224,7 +230,9 @@ const submitForm = async () => {
       brand: form.brand || 'Genérico',
       model: form.model || null,
       os_installed:
-        form.category === 'computador' ? [...form.os_installed] : [],
+        form.category === 'computador' || form.category === 'notebook'
+          ? [...form.os_installed]
+          : [],
       supported_connections:
         form.category === 'projetor multimídia'
           ? [...form.supported_connections]
