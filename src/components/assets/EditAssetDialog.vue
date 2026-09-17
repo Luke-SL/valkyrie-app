@@ -5,30 +5,39 @@
     persistent
   >
     <q-card
-      style="
-        min-width: 400px;
-        max-width: 500px;
-        width: 100%;
-        border-radius: 12px;
-      "
+      class="vk-dialog"
+      style="min-width: 400px; max-width: 500px; width: 100%"
     >
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-weight-bold">Editar Equipamento</div>
+        <div class="vk-font-display text-subtitle1 text-weight-medium vk-title">
+          Editar Equipamento
+        </div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section>
-        <div class="text-caption text-grey-6 q-mb-md">
-          Identificação: <strong>{{ form.patrimony_number }}</strong> |
-          Categoria: <strong>{{ form.category?.toUpperCase() }}</strong>
+        <div class="text-caption vk-subtitle q-mb-md">
+          Identificação:
+          <span class="vk-font-mono vk-id">{{ form.patrimony_number }}</span>
+          &nbsp;·&nbsp; Categoria:
+          <span style="text-transform: capitalize">{{ form.category }}</span>
         </div>
 
         <q-form @submit.prevent="submitForm" class="q-gutter-y-md">
-          <!-- Linha corrigida: q-gutter-x-md direto nos q-inputs com classe col -->
           <div class="row q-gutter-x-md">
-            <q-input v-model="form.brand" label="Marca" outlined class="col" />
-            <q-input v-model="form.model" label="Modelo" outlined class="col" />
+            <q-input
+              v-model="form.brand"
+              label="Marca"
+              outlined
+              class="col vk-field"
+            />
+            <q-input
+              v-model="form.model"
+              label="Modelo"
+              outlined
+              class="col vk-field"
+            />
           </div>
 
           <!-- Campos dinâmicos conforme a categoria -->
@@ -42,6 +51,7 @@
             multiple
             outlined
             use-chips
+            class="vk-field"
           />
 
           <q-select
@@ -52,6 +62,7 @@
             multiple
             outlined
             use-chips
+            class="vk-field"
           />
 
           <q-input
@@ -60,15 +71,23 @@
             outlined
             type="textarea"
             rows="3"
+            class="vk-field"
           />
 
           <div class="row justify-end q-gutter-sm q-mt-md">
-            <q-btn label="Cancelar" flat color="grey-7" v-close-popup />
+            <q-btn
+              label="Cancelar"
+              flat
+              no-caps
+              class="vk-btn-ghost"
+              v-close-popup
+            />
             <q-btn
               label="Salvar Alterações"
               type="submit"
-              color="primary"
               unelevated
+              no-caps
+              class="vk-btn-primary"
               :loading="loading"
             />
           </div>
@@ -167,3 +186,38 @@ const submitForm = async () => {
   }
 }
 </script>
+
+<style scoped>
+.vk-dialog {
+  background: var(--vk-surface-raised);
+  border: 1px solid var(--vk-border);
+  border-radius: var(--vk-radius-lg);
+}
+
+.vk-title {
+  color: var(--vk-text);
+}
+
+.vk-subtitle {
+  color: var(--vk-text-dim);
+}
+
+.vk-id {
+  color: var(--vk-text);
+  font-weight: 600;
+}
+
+.vk-field :deep(.q-field__control) {
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-btn-primary {
+  background: var(--vk-accent);
+  color: var(--vk-accent-text);
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-btn-ghost {
+  color: var(--vk-text-dim);
+}
+</style>

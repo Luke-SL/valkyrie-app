@@ -6,41 +6,37 @@
       no-caps
       icon="arrow_back"
       label="Voltar para as salas"
-      class="q-mb-md"
+      class="q-mb-md vk-back-btn"
       @click="router.push('/rooms')"
     />
 
     <!-- Detalhes da Sala -->
-    <q-card flat bordered class="q-mb-lg border-radius-8 q-pa-sm">
-      <q-card-section class="row items-center justify-between">
+    <div class="vk-room-header q-mb-lg q-pa-md">
+      <div class="row items-center justify-between">
         <div>
           <div class="row items-center q-gutter-sm">
-            <div class="text-h4 text-weight-bold">{{ room.name }}</div>
-            <q-badge
-              :color="$q.dark.isActive ? 'grey-8' : 'grey-3'"
-              :text-color="$q.dark.isActive ? 'grey-2' : 'grey-9'"
-              class="text-weight-bold q-pa-xs"
-            >
-              {{ room.category?.toUpperCase() }}
-            </q-badge>
+            <div class="vk-font-display text-h5 text-weight-medium vk-title">{{
+              room.name
+            }}</div>
+            <div class="row items-center q-gutter-x-xs">
+              <span
+                class="vk-dot"
+                :style="{ background: roomCategoryColor(room.category) }"
+              />
+              <span
+                class="text-caption vk-subtitle"
+                style="text-transform: capitalize"
+              >
+                {{ room.category }}
+              </span>
+            </div>
           </div>
 
           <div class="row q-gutter-sm q-mt-sm">
-            <q-badge
-              :color="$q.dark.isActive ? 'grey-9' : 'grey-2'"
-              :text-color="$q.dark.isActive ? 'grey-3' : 'grey-8'"
-              class="q-pa-xs"
-            >
-              Bloco: {{ room.block }}
-            </q-badge>
-            <q-badge
-              v-if="room.connections?.length"
-              :color="$q.dark.isActive ? 'grey-9' : 'grey-2'"
-              :text-color="$q.dark.isActive ? 'grey-3' : 'grey-8'"
-              class="q-pa-xs"
-            >
-              Comunicação: {{ room.connections.join(', ') }}
-            </q-badge>
+            <div class="vk-info-chip">Bloco {{ room.block }}</div>
+            <div v-if="room.connections?.length" class="vk-info-chip">
+              {{ room.connections.join(', ') }}
+            </div>
           </div>
         </div>
 
@@ -49,7 +45,7 @@
           <q-btn
             flat
             round
-            color="grey-5"
+            color="grey-6"
             icon="edit"
             @click="showEditDialog = true"
           />
@@ -57,26 +53,26 @@
             v-if="userRole === 'admin'"
             flat
             round
-            color="red-5"
+            class="vk-danger-btn"
             icon="delete"
             @click="confirmDelete"
           />
         </div>
-      </q-card-section>
-    </q-card>
+      </div>
+    </div>
 
     <!-- Cabeçalho da Lista de Patrimônios -->
     <div class="row justify-between items-center q-mb-md">
-      <div class="text-h6 text-weight-bold row items-center">
-        <q-icon name="inventory_2" class="q-mr-sm" />
+      <div class="text-subtitle1 text-weight-medium row items-center vk-title">
+        <q-icon name="inventory_2" size="20px" class="q-mr-sm vk-subtitle" />
         Patrimônios na Sala ({{ assets.length }})
       </div>
       <q-btn
-        color="primary"
         icon="add"
         label="Adicionar Equipamento"
         unelevated
         no-caps
+        class="vk-btn-primary"
         @click="showAddDialog = true"
       />
     </div>
@@ -123,6 +119,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useValkyrie } from '/src/composables/useValkyrie'
 import { useAuth } from '/src/composables/useAuth'
+import { roomCategoryColor } from '/src/utils/categoryStyles'
 
 import AssetTable from '/src/components/assets/AssetTable.vue'
 import AddAssetDialog from '/src/components/assets/AddAssetDialog.vue'
@@ -216,7 +213,40 @@ const confirmDelete = () => {
 </script>
 
 <style scoped>
-.border-radius-8 {
-  border-radius: 8px;
+.vk-back-btn {
+  color: var(--vk-text-dim);
+}
+
+.vk-title {
+  color: var(--vk-text);
+}
+
+.vk-subtitle {
+  color: var(--vk-text-dim);
+}
+
+.vk-room-header {
+  background: var(--vk-surface);
+  border: 1px solid var(--vk-border);
+  border-radius: var(--vk-radius-lg);
+}
+
+.vk-info-chip {
+  background: var(--vk-bg);
+  border: 1px solid var(--vk-border);
+  color: var(--vk-text-dim);
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: var(--vk-radius-sm);
+}
+
+.vk-btn-primary {
+  background: var(--vk-accent);
+  color: var(--vk-accent-text);
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-danger-btn {
+  color: var(--vk-danger);
 }
 </style>

@@ -1,52 +1,41 @@
 <template>
-  <q-layout
-    view="lHh Lpr lFf"
-    :class="$q.dark.isActive ? 'bg-dark-page' : 'bg-grey-2'"
-    class="flex flex-center"
-  >
-    <q-card
-      flat
-      bordered
-      class="login-card q-pa-lg relative-position"
-      :class="$q.dark.isActive ? 'bg-dark' : 'bg-white'"
-    >
+  <q-layout view="lHh Lpr lFf" class="vk-login-bg flex flex-center">
+    <q-card flat class="vk-login-card q-pa-lg relative-position">
       <!-- Alternador de Tema Dark/Light no topo do cartão -->
       <div class="absolute-top-right q-pa-sm">
         <q-btn
           flat
           round
           dense
+          size="sm"
           :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
-          :color="$q.dark.isActive ? 'grey-4' : 'grey-8'"
+          class="vk-theme-toggle"
           @click="toggleDarkMode"
         >
           <q-tooltip>{{
-            $q.dark.isActive ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'
+            $q.dark.isActive ? 'Ativar modo claro' : 'Ativar modo escuro'
           }}</q-tooltip>
         </q-btn>
       </div>
 
       <!-- Cabeçalho com Logo e Nome -->
       <q-card-section class="q-pb-none text-center q-pt-md">
-        <div
-          class="row items-center justify-center text-primary text-weight-bold text-h5 q-mb-xs"
-        >
+        <div class="row items-center justify-center q-mb-sm vk-brand-mark">
           <q-img
             src="images/crow.png"
-            style="width: 44px; height: 44px"
+            style="width: 40px; height: 40px"
             :style="
               $q.dark.isActive ? 'filter: invert(1) brightness(1.8);' : ''
             "
             fit="contain"
             class="q-mr-sm"
           />
-          <span>VALKYRIE</span>
+          <span class="vk-font-display text-h5 text-weight-medium"
+            >VALKYRIE</span
+          >
         </div>
-        <div
-          class="text-caption"
-          :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-7'"
-        >
-          Sistema de Controle de Patrimônio
+        <div class="text-caption vk-subtitle">
+          Sistema de controle de patrimônio
         </div>
       </q-card-section>
 
@@ -58,7 +47,7 @@
             label="E-mail"
             outlined
             type="email"
-            :bg-color="$q.dark.isActive ? 'dark-page' : 'white'"
+            class="vk-field"
             :rules="[val => !!val || 'E-mail é obrigatório']"
           />
 
@@ -67,24 +56,21 @@
             label="Senha"
             outlined
             type="password"
-            :bg-color="$q.dark.isActive ? 'dark-page' : 'white'"
+            class="vk-field"
             :rules="[val => !!val || 'Senha é obrigatória']"
           />
 
-          <div
-            v-if="errorMessage"
-            class="text-negative text-center text-weight-medium text-caption"
-          >
+          <div v-if="errorMessage" class="vk-error text-center text-caption">
             {{ errorMessage }}
           </div>
 
           <div>
             <q-btn
-              label="Entrar no Sistema"
+              label="Entrar no sistema"
               type="submit"
-              color="primary"
-              class="full-width q-py-sm text-weight-bold"
+              class="full-width q-py-sm text-weight-medium vk-submit-btn"
               unelevated
+              no-caps
               :loading="loading"
             />
           </div>
@@ -133,10 +119,42 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-card {
+.vk-login-bg {
+  background: var(--vk-bg);
+}
+
+.vk-login-card {
   width: 90%;
   max-width: 400px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: var(--vk-radius-lg);
+  border: 1px solid var(--vk-border);
+  background: var(--vk-surface);
+}
+
+.vk-brand-mark {
+  color: var(--vk-text);
+}
+
+.vk-subtitle {
+  color: var(--vk-text-dim);
+}
+
+.vk-theme-toggle {
+  color: var(--vk-text-dim);
+}
+
+.vk-error {
+  color: var(--vk-danger);
+  font-weight: 500;
+}
+
+.vk-submit-btn {
+  background: var(--vk-accent);
+  color: var(--vk-accent-text);
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-field :deep(.q-field__control) {
+  border-radius: var(--vk-radius-md);
 }
 </style>

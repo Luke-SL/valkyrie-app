@@ -1,0 +1,114 @@
+// =============================================================================
+// VALKYRIE — Design Tokens
+// -----------------------------------------------------------------------------
+// Guardiã do patrimônio: o corvo do logo (memória, vigilância) inspira uma
+// identidade de "livro de bordo" — ferro, bronze envelhecido e traços retos,
+// no lugar do azul/cinza genérico de dashboard SaaS.
+//
+// Importe este arquivo UMA VEZ, globalmente. Em projetos Quasar CLI, adicione
+// a linha abaixo em quasar.config.js:
+//   css: ['app.scss', 'valkyrie-theme.scss']
+// e importe-o também no topo de src/css/app.scss:
+//   @import './valkyrie-theme.scss';
+// =============================================================================
+
+// Fontes: adicione ao <head> de index.html (ou via quasar.config extendViteConf)
+// <link rel="preconnect" href="https://fonts.googleapis.com">
+// <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+:root {
+  --vk-font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --vk-font-body: 'Inter', 'Segoe UI', sans-serif;
+  --vk-font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+
+  --vk-radius-sm: 3px;
+  --vk-radius-md: 4px;
+  --vk-radius-lg: 6px;
+
+  // Cores por categoria de sala — usadas por src/utils/categoryStyles.js
+  --vk-cat-administracao: #8d7350;
+  --vk-cat-sala-de-aula: #4c86a8;
+  --vk-cat-laboratorio: #7a5ea8;
+  --vk-cat-auditorio: #b8563f;
+  --vk-cat-sala-de-estudos: #5e8f6f;
+  --vk-cat-deposito: #79726a;
+  --vk-cat-corredor: #6b6e76;
+}
+
+// ---------------------------------------------------------------------------
+// Modo escuro (padrão do app)
+// ---------------------------------------------------------------------------
+body.body--dark {
+  --vk-bg: #14161b;
+  --vk-surface: #1b1e25;
+  --vk-surface-raised: #22262e;
+  --vk-border: #2e323c;
+  --vk-border-strong: #3a3f4b;
+  --vk-text: #e9e7e2;
+  --vk-text-dim: #8d909b;
+  --vk-accent: #c48a3a;
+  --vk-accent-text: #1b1e25;
+  --vk-accent-dim: #4a3d28;
+  --vk-danger: #c96a4d;
+  --vk-danger-dim: #402823;
+  --vk-success: #6fa080;
+
+  background: var(--vk-bg);
+}
+
+// ---------------------------------------------------------------------------
+// Modo claro
+// ---------------------------------------------------------------------------
+body.body--light {
+  --vk-bg: #edeef0;
+  --vk-surface: #ffffff;
+  --vk-surface-raised: #ffffff;
+  --vk-border: #d8dade;
+  --vk-border-strong: #c2c5cb;
+  --vk-text: #1b1e25;
+  --vk-text-dim: #6b6e76;
+  --vk-accent: #a9701f;
+  --vk-accent-text: #ffffff;
+  --vk-accent-dim: #f1e3cd;
+  --vk-danger: #a2482f;
+  --vk-danger-dim: #f5e1db;
+  --vk-success: #3f6d51;
+
+  background: var(--vk-bg);
+}
+
+// ---------------------------------------------------------------------------
+// Overrides globais discretos — mantêm os componentes Quasar, só ajustam
+// acabamento (raio, borda, tipografia) para a identidade do produto.
+// ---------------------------------------------------------------------------
+.vk-font-display {
+  font-family: var(--vk-font-display);
+  letter-spacing: -0.01em;
+}
+
+.vk-font-mono {
+  font-family: var(--vk-font-mono);
+  letter-spacing: 0.01em;
+}
+
+.vk-surface {
+  background: var(--vk-surface);
+  border: 1px solid var(--vk-border);
+  border-radius: var(--vk-radius-lg);
+}
+
+.vk-hairline-top {
+  border-top: 1px solid var(--vk-border);
+}
+
+.vk-text-dim {
+  color: var(--vk-text-dim);
+}
+
+.vk-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

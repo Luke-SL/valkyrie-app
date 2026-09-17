@@ -1,68 +1,79 @@
 <template>
-  <q-card
-    class="cursor-pointer room-card border-radius-8 full-height column"
-    flat
-    bordered
-  >
-    <q-card-section class="col column justify-between">
-      <!-- Parte superior: Nome e Categoria -->
-      <div>
-        <div class="row justify-between items-start no-wrap">
-          <!-- Título com limite de 5 caracteres + Tooltip -->
-          <div
-            class="col text-h6 text-weight-bold q-pr-sm"
-            style="line-height: 1.2"
-          >
-            {{
-              room.name.length > 5
-                ? room.name.substring(0, 5) + '...'
-                : room.name
-            }}
-
-            <!-- Mostra o nome completo flutuando quando passar o mouse -->
-            <q-tooltip v-if="room.name.length > 5" class="bg-grey-9 text-body2">
-              {{ room.name }}
-            </q-tooltip>
-          </div>
-
-          <div class="col-auto">
-            <q-badge
-              color="grey-2"
-              text-color="grey-8"
-              class="text-weight-bold q-pa-xs rounded-borders"
-            >
-              {{ room.category?.toUpperCase() }}
-            </q-badge>
-          </div>
-        </div>
+  <div class="vk-room-card cursor-pointer full-height column">
+    <div class="vk-room-card__top row justify-between items-start no-wrap">
+      <div class="vk-font-mono vk-room-card__code">
+        {{ room.name.length > 5 ? room.name.substring(0, 5) + '…' : room.name }}
+        <q-tooltip v-if="room.name.length > 5" class="vk-tooltip">
+          {{ room.name }}
+        </q-tooltip>
       </div>
+    </div>
 
-      <!-- Parte inferior: Conexões -->
-      <div style="min-height: 24px" class="q-mt-md">
-        <div
-          v-if="room.connections?.length > 0"
-          class="text-caption text-grey-6 row items-center"
-        >
-          <q-icon name="monitor" class="q-mr-xs" />
-          {{ room.connections.join(', ') }}
-        </div>
+    <div class="row items-center q-gutter-x-xs q-mt-sm">
+      <span
+        class="vk-dot"
+        :style="{ background: roomCategoryColor(room.category) }"
+      />
+      <span class="text-caption vk-room-card__category">{{
+        room.category
+      }}</span>
+    </div>
+
+    <q-space />
+
+    <div class="q-mt-md" style="min-height: 20px">
+      <div
+        v-if="room.connections?.length > 0"
+        class="text-caption vk-room-card__connections row items-center no-wrap"
+      >
+        <q-icon name="cable" size="14px" class="q-mr-xs" />
+        {{ room.connections.join(', ') }}
       </div>
-    </q-card-section>
-  </q-card>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { roomCategoryColor } from '/src/utils/categoryStyles'
+
 defineProps({
   room: { type: Object, required: true }
 })
 </script>
 
 <style scoped>
-.room-card:hover {
-  border-color: #1976d2;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+.vk-room-card {
+  background: var(--vk-surface);
+  border: 1px solid var(--vk-border);
+  border-radius: var(--vk-radius-md);
+  padding: 14px 16px;
+  transition: border-color 0.15s ease;
 }
-.border-radius-8 {
-  border-radius: 8px;
+
+.vk-room-card:hover {
+  border-color: var(--vk-accent);
+}
+
+.vk-room-card__code {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--vk-text);
+  line-height: 1.2;
+}
+
+.vk-room-card__category {
+  color: var(--vk-text-dim);
+  text-transform: capitalize;
+}
+
+.vk-room-card__connections {
+  color: var(--vk-text-dim);
+}
+
+:deep(.vk-tooltip) {
+  background: var(--vk-surface-raised);
+  color: var(--vk-text);
+  border: 1px solid var(--vk-border);
+  font-size: 0.75rem;
 }
 </style>

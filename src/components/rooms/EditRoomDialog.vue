@@ -5,15 +5,13 @@
     persistent
   >
     <q-card
-      style="
-        min-width: 400px;
-        max-width: 500px;
-        width: 100%;
-        border-radius: 12px;
-      "
+      class="vk-dialog"
+      style="min-width: 400px; max-width: 500px; width: 100%"
     >
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-weight-bold">Editar Sala: {{ form.name }}</div>
+        <div class="vk-font-display text-subtitle1 text-weight-medium vk-title">
+          Editar Sala: {{ form.name }}
+        </div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
@@ -25,14 +23,14 @@
               v-model="form.name"
               label="Nome da Sala"
               outlined
-              class="col"
+              class="col vk-field"
               :disable="userRole !== 'admin'"
             />
             <q-input
               v-model="form.block"
               label="Bloco"
               outlined
-              class="col"
+              class="col vk-field"
               :disable="userRole !== 'admin'"
             />
           </div>
@@ -42,6 +40,7 @@
             :options="roomCategories"
             label="Categoria da Sala"
             outlined
+            class="vk-field"
             :disable="userRole !== 'admin'"
             :hint="
               userRole !== 'admin'
@@ -57,6 +56,7 @@
             multiple
             use-chips
             outlined
+            class="vk-field"
           />
 
           <q-input
@@ -65,15 +65,23 @@
             outlined
             type="textarea"
             rows="3"
+            class="vk-field"
           />
 
           <div class="row justify-end q-gutter-sm q-mt-md">
-            <q-btn label="Cancelar" flat color="grey-7" v-close-popup />
+            <q-btn
+              label="Cancelar"
+              flat
+              no-caps
+              class="vk-btn-ghost"
+              v-close-popup
+            />
             <q-btn
               label="Salvar Alterações"
               type="submit"
-              color="primary"
               unelevated
+              no-caps
+              class="vk-btn-primary"
               :loading="loading"
             />
           </div>
@@ -157,3 +165,29 @@ const submitForm = async () => {
   }
 }
 </script>
+
+<style scoped>
+.vk-dialog {
+  background: var(--vk-surface-raised);
+  border: 1px solid var(--vk-border);
+  border-radius: var(--vk-radius-lg);
+}
+
+.vk-title {
+  color: var(--vk-text);
+}
+
+.vk-field :deep(.q-field__control) {
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-btn-primary {
+  background: var(--vk-accent);
+  color: var(--vk-accent-text);
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-btn-ghost {
+  color: var(--vk-text-dim);
+}
+</style>

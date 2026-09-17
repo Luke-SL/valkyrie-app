@@ -101,6 +101,41 @@ export function useValkyrie() {
     }
   }
 
+  const searchAll = async query => {
+    if (!query || query.trim().length < 2) return { rooms: [], assets: [] }
+    const term = `%${query.trim()}%`
+
+    try {
+      const [roomsRes, assetsRes] = await Promise.all([
+        supabase
+          .from('rooms')
+          .select('id, name, block, category')
+          .or(`name.ilike.${term},block.ilike.${term},category.ilike.${term}`)
+          .limit(5),
+        supabase
+          .from('assets')
+          .select(
+            'id, patrimony_number, category, brand, model, room_id, rooms(name, block)'
+          )
+          .or(
+            `patrimony_number.ilike.${term},brand.ilike.${term},model.ilike.${term},category.ilike.${term}`
+          )
+          .limit(6)
+      ])
+
+      return {
+        rooms: roomsRes.data || [],
+        assets: assetsRes.data || []
+      }
+    } catch (err) {
+      console.error('Erro na busca global:', err)
+      return { rooms: [], assets: [] }
+    }
+  }
+
+  // Lembre-se de incluir searchAll no return do useValkyrie:
+  // return { ..., searchAll }
+
   // Regras estritas: Apenas admin pode criar/deletar salas ou mudar categoria
   const canEditRooms = () => userRole.value === 'admin'
 
@@ -116,6 +151,7 @@ export function useValkyrie() {
     deleteRoom,
     updateAsset,
     deleteAsset,
-    getAllAssets
+    getAllAssets,
+    searchAll
   }
 }

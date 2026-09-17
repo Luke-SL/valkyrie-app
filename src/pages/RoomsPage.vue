@@ -2,31 +2,39 @@
   <q-page class="q-pa-lg">
     <div class="row justify-between items-center q-mb-xl">
       <div>
-        <h4 class="text-weight-bold q-my-none">Gerenciamento de Salas</h4>
-        <div class="text-caption text-grey-5 q-mt-xs"
-          >Visão geral e distribuição dos blocos e setores.</div
+        <div class="vk-font-display text-h5 text-weight-medium vk-title"
+          >Gerenciamento de Salas</div
         >
+        <div class="text-caption vk-subtitle q-mt-xs">
+          Visão geral e distribuição dos blocos e setores.
+        </div>
       </div>
       <q-btn
         v-if="userRole === 'admin'"
-        color="primary"
         icon="add"
         label="Nova Sala"
         unelevated
         no-caps
-        class="q-px-md"
+        class="vk-btn-primary q-px-md"
         @click="showCreateDialog = true"
       />
     </div>
 
     <!-- Lista de Blocos agrupados -->
     <div v-for="b in blocks" :key="b.letter" class="q-mb-xl">
-      <div class="text-h6 text-weight-bold q-mb-md">
-        {{
-          b.letter.toLowerCase().includes('corredor') || b.letter.length > 2
-            ? b.letter
-            : `Bloco ${b.letter}`
-        }}
+      <div class="row items-center q-mb-md vk-block-heading">
+        <span
+          class="vk-font-display text-subtitle1 text-weight-medium vk-title"
+        >
+          {{
+            b.letter.toLowerCase().includes('corredor') || b.letter.length > 2
+              ? b.letter
+              : `Bloco ${b.letter}`
+          }}
+        </span>
+        <span class="text-caption vk-subtitle q-ml-sm"
+          >{{ b.rooms.length }} salas</span
+        >
       </div>
 
       <div class="row q-col-gutter-md">
@@ -38,6 +46,11 @@
           <RoomCard :room="room" @click="goToRoom(room.id)" />
         </div>
       </div>
+    </div>
+
+    <div v-if="!blocks.length" class="vk-empty-state text-center q-pa-xl">
+      <q-icon name="place" size="32px" class="q-mb-sm" />
+      <div class="text-body2">Nenhuma sala cadastrada ainda.</div>
     </div>
 
     <!-- Modal de Criação de Sala -->
@@ -96,3 +109,30 @@ const blocks = computed(() => {
     }))
 })
 </script>
+
+<style scoped>
+.vk-title {
+  color: var(--vk-text);
+}
+
+.vk-subtitle {
+  color: var(--vk-text-dim);
+}
+
+.vk-block-heading {
+  border-bottom: 1px solid var(--vk-border);
+  padding-bottom: 8px;
+}
+
+.vk-btn-primary {
+  background: var(--vk-accent);
+  color: var(--vk-accent-text);
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-empty-state {
+  color: var(--vk-text-dim);
+  border: 1px dashed var(--vk-border);
+  border-radius: var(--vk-radius-lg);
+}
+</style>

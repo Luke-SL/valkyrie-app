@@ -5,17 +5,13 @@
     persistent
   >
     <q-card
-      style="
-        min-width: 400px;
-        max-width: 600px;
-        width: 100%;
-        border-radius: 12px;
-      "
+      class="vk-dialog"
+      style="min-width: 400px; max-width: 600px; width: 100%"
     >
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-weight-bold"
-          >Adicionar Equipamento / Utensílio</div
-        >
+        <div class="vk-font-display text-subtitle1 text-weight-medium vk-title">
+          Adicionar Equipamento / Utensílio
+        </div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
@@ -24,18 +20,16 @@
         <q-form @submit.prevent="submitForm" class="q-gutter-y-md q-mt-xs">
           <!-- Seletor de Tipo de Identificação -->
           <div>
-            <div class="text-subtitle2 text-grey-8 q-mb-sm"
+            <div class="text-caption vk-subtitle q-mb-sm"
               >Tipo de Identificação</div
             >
             <q-btn-toggle
               v-model="idType"
               spread
               no-caps
-              rounded
               unelevated
               toggle-color="primary"
-              color="grey-2"
-              text-color="grey-8"
+              class="vk-toggle"
               :options="[
                 { label: 'Patrimônio', value: 'patrimony' },
                 { label: 'Nº Série', value: 'serial' },
@@ -50,6 +44,7 @@
             v-model="form.patrimony_number"
             label="Nº do Patrimônio (10 dígitos)"
             outlined
+            class="vk-field"
             mask="##########"
             unmasked-value
             :rules="[
@@ -64,15 +59,16 @@
             v-model="form.patrimony_number"
             label="Número de Série"
             outlined
+            class="vk-field"
             :rules="[val => !!val || 'Obrigatório']"
           />
 
           <!-- Aviso de Identificador Automático -->
           <div
             v-if="idType === 'auto'"
-            class="bg-blue-1 text-primary q-pa-md rounded-borders text-center text-weight-medium"
+            class="vk-auto-notice q-pa-md text-center"
           >
-            <q-icon name="auto_awesome" size="sm" class="q-mr-sm" />
+            <q-icon name="auto_awesome" size="18px" class="q-mr-sm" />
             Um código único (VALK-XXXXXX) será gerado automaticamente.
           </div>
 
@@ -82,6 +78,7 @@
             :options="categories"
             label="Categoria"
             outlined
+            class="vk-field"
             :rules="[val => !!val || 'Categoria é obrigatória']"
           />
 
@@ -91,13 +88,17 @@
               label="Marca"
               outlined
               placeholder="Ex: Intelbras, Epson, Genérico"
-              class="col"
+              class="col vk-field"
             />
-            <q-input v-model="form.model" label="Modelo" outlined class="col" />
+            <q-input
+              v-model="form.model"
+              label="Modelo"
+              outlined
+              class="col vk-field"
+            />
           </div>
 
           <!-- Campos dinâmicos dependentes da categoria -->
-          <!-- Exibir campo de OS tanto para computador de mesa quanto para notebook -->
           <q-select
             v-if="
               form.category === 'computador' || form.category === 'notebook'
@@ -108,6 +109,7 @@
             multiple
             outlined
             use-chips
+            class="vk-field"
           />
 
           <q-select
@@ -118,6 +120,7 @@
             multiple
             outlined
             use-chips
+            class="vk-field"
           />
 
           <q-input
@@ -126,15 +129,23 @@
             outlined
             type="textarea"
             rows="3"
+            class="vk-field"
           />
 
           <div class="row justify-end q-gutter-sm q-mt-md">
-            <q-btn label="Cancelar" flat color="grey-7" v-close-popup />
+            <q-btn
+              label="Cancelar"
+              flat
+              no-caps
+              class="vk-btn-ghost"
+              v-close-popup
+            />
             <q-btn
               label="Salvar Equipamento"
               type="submit"
-              color="primary"
               unelevated
+              no-caps
+              class="vk-btn-primary"
               :loading="loading"
             />
           </div>
@@ -260,3 +271,50 @@ const submitForm = async () => {
   }
 }
 </script>
+
+<style scoped>
+.vk-dialog {
+  background: var(--vk-surface-raised);
+  border: 1px solid var(--vk-border);
+  border-radius: var(--vk-radius-lg);
+}
+
+.vk-title {
+  color: var(--vk-text);
+}
+
+.vk-subtitle {
+  color: var(--vk-text-dim);
+}
+
+.vk-field :deep(.q-field__control) {
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-toggle :deep(.q-btn) {
+  border: 1px solid var(--vk-border);
+  color: var(--vk-text-dim);
+}
+
+.vk-toggle :deep(.q-btn.bg-primary) {
+  background: var(--vk-accent) !important;
+  color: var(--vk-accent-text) !important;
+}
+
+.vk-auto-notice {
+  background: var(--vk-accent-dim);
+  color: var(--vk-accent);
+  border-radius: var(--vk-radius-md);
+  font-weight: 500;
+}
+
+.vk-btn-primary {
+  background: var(--vk-accent);
+  color: var(--vk-accent-text);
+  border-radius: var(--vk-radius-md);
+}
+
+.vk-btn-ghost {
+  color: var(--vk-text-dim);
+}
+</style>
