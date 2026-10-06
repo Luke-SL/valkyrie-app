@@ -37,12 +37,42 @@ export function useValkyrie() {
     }
   }
 
-  const moveAsset = async (assetId, newRoomId) => {
-    const { error } = await supabase
+  // Buscar todos os patrimônios (já inclui salas via LEFT JOIN implicitamente no Supabase)
+  const fetchAssets = async () => {
+    const { data, error } = await supabase
       .from('assets')
-      .update({ room_id: newRoomId })
-      .eq('id', assetId)
+      .select('*, rooms(id, name, block)')
+      .order('created_at', { ascending: false })
+
     if (error) throw error
+    return data
+  }
+
+  // Mover patrimônio (aceita roomId nulo)
+  const moveAsset = async (assetId, newRoomId) => {
+    const { data, error } = await supabase
+      .from('assets')
+      .update({ room_id: newRoomId || null })
+      .eq('id', assetId)
+      .select()
+
+    if (error) throw error
+    return data
+  }
+
+  const getUnassignedAssets = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('assets')
+        .select('*')
+        .is('room_id', null)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data || []
+    } catch (err) {
+      console.error('Erro ao buscar patrimônios sem sala:', err)
+      return []
+    }
   }
 
   const addAsset = async assetData => {
@@ -143,7 +173,9 @@ export function useValkyrie() {
     userRole,
     getRooms,
     getAssetsByRoom,
+    fetchAssets,
     moveAsset,
+    getUnassignedAssets,
     addAsset,
     updateRoom,
     canEditRooms,

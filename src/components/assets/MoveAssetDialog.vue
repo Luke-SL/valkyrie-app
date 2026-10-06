@@ -28,8 +28,8 @@
             outlined
             emit-value
             map-options
+            clearable
             class="vk-field"
-            :rules="[val => !!val || 'Selecione uma sala de destino']"
           />
 
           <div class="row justify-end q-gutter-sm q-mt-lg">
@@ -76,12 +76,18 @@ const loading = ref(false)
 // Formata as salas para o dropdown (Ex: "A - A1 (Sala de Aula)")
 const roomOptions = computed(() => {
   if (!props.allRooms) return []
-  return props.allRooms
-    .filter(r => r.id !== props.asset?.room_id) // Esconde a sala atual
+  const opts = props.allRooms
+    .filter(r => r.id !== props.asset?.room_id)
     .map(r => ({
       label: `Bloco ${r.block} - ${r.name} (${r.category})`,
       value: r.id
     }))
+
+  // opção para tirar o patrimônio de qualquer sala
+  if (props.asset?.room_id) {
+    opts.unshift({ label: '— Remover localização (sem sala) —', value: null })
+  }
+  return opts
 })
 
 watch(

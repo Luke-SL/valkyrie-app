@@ -9,6 +9,15 @@
           Visão global de todos os equipamentos e utensílios cadastrados.
         </div>
       </div>
+
+      <q-btn
+        label="Novo Patrimônio"
+        icon="add"
+        unelevated
+        no-caps
+        class="vk-btn-primary"
+        @click="showAddDialog = true"
+      />
     </div>
 
     <q-table
@@ -80,6 +89,12 @@
         </q-td>
       </template>
     </q-table>
+
+    <AddAssetDialog
+      v-model="showAddDialog"
+      :all-rooms="rooms"
+      @added="reloadAssets"
+    />
   </q-page>
 </template>
 
@@ -88,10 +103,13 @@ import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { useValkyrie } from '/src/composables/useValkyrie'
 import { assetCategoryIcon } from '/src/utils/categoryStyles'
+import AddAssetDialog from '/src/components/assets/AddAssetDialog.vue'
 
 const $q = useQuasar()
-const { getAllAssets } = useValkyrie()
+const { getAllAssets, getRooms } = useValkyrie()
 const assets = ref([])
+const rooms = ref([])
+const showAddDialog = ref(false)
 
 const columns = [
   {
@@ -122,8 +140,13 @@ const columns = [
   }
 ]
 
-onMounted(async () => {
+async function reloadAssets() {
   assets.value = await getAllAssets()
+}
+
+onMounted(async () => {
+  await reloadAssets()
+  rooms.value = await getRooms()
 })
 </script>
 

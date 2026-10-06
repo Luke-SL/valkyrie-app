@@ -81,6 +81,18 @@
             class="vk-field"
             :rules="[val => !!val || 'Categoria é obrigatória']"
           />
+          <q-select
+            v-if="!roomId"
+            v-model="form.room_id"
+            :options="roomOptions"
+            label="Sala (opcional)"
+            hint="Deixe em branco para um item sem localização definida"
+            outlined
+            emit-value
+            map-options
+            clearable
+            class="vk-field"
+          />
 
           <div class="row q-gutter-x-md">
             <q-input
@@ -156,18 +168,26 @@
 </template>
 
 <script setup>
-import { reactive, watch, ref } from 'vue'
+import { reactive, watch, ref, computed } from 'vue'
 import { useValkyrie } from '/src/composables/useValkyrie'
 import { useQuasar } from 'quasar'
 
 const props = defineProps({
   modelValue: Boolean,
-  roomId: { type: String, required: true }
+  roomId: { type: String, default: null }, // continua existindo p/ uso vindo da tela de sala
+  allRooms: { type: Array, default: () => [] } // novo: usado quando não há roomId fixo
 })
 const emit = defineEmits(['update:modelValue', 'added'])
 
 const $q = useQuasar()
 const { addAsset } = useValkyrie()
+
+const roomOptions = computed(() =>
+  props.allRooms.map(r => ({
+    label: `Bloco ${r.block} - ${r.name} (${r.category})`,
+    value: r.id
+  }))
+)
 
 const categories = [
   'access point',
@@ -208,7 +228,8 @@ const getInitialState = () => ({
   model: '',
   os_installed: [],
   supported_connections: [],
-  notes: ''
+  notes: '',
+  room_id: props.roomId || null // novo campo no form
 })
 
 const form = reactive(getInitialState())
@@ -236,7 +257,7 @@ const submitForm = async () => {
     }
 
     const assetData = {
-      room_id: props.roomId,
+      room_id: form.room_id,
       patrimony_number: finalIdentification,
       category: form.category,
       brand: form.brand || 'Genérico',
