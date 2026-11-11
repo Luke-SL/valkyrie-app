@@ -6,7 +6,7 @@
     :columns="columns"
     row-key="id"
     class="vk-table"
-    no-data-label="Nenhum equipamento cadastrado nesta sala"
+    no-data-label="Nenhum equipamento cadastrado"
     :pagination="{ rowsPerPage: 10 }"
   >
     <template v-slot:body-cell-patrimony="props">
@@ -27,6 +27,29 @@
             props.row.category
           }}</span>
         </div>
+      </q-td>
+    </template>
+
+    <template v-slot:body-cell-location="props">
+      <q-td :props="props">
+        <q-chip
+          v-if="props.row.rooms"
+          dense
+          icon="place"
+          size="12px"
+          class="vk-location-chip"
+        >
+          {{ props.row.rooms.name }} (Bloco {{ props.row.rooms.block }})
+        </q-chip>
+        <q-chip
+          v-else
+          dense
+          icon="warning_amber"
+          size="12px"
+          class="vk-unassigned-chip"
+        >
+          Sem sala
+        </q-chip>
       </q-td>
     </template>
 
@@ -52,6 +75,33 @@
         >
           Suporta: {{ props.row.supported_connections.join(', ') }}
         </div>
+      </q-td>
+    </template>
+
+    <!-- Coluna de Status Interativa (Edição Rápida Direto na Tabela) -->
+    <template v-slot:body-cell-status="props">
+      <q-td :props="props">
+        <q-select
+          :model-value="props.row.status || 'funcional'"
+          :options="ASSET_STATUS"
+          dense
+          borderless
+          options-dense
+          emit-value
+          map-options
+          class="vk-status-select"
+          @update:model-value="val => onStatusChange(props.row, val)"
+        >
+          <template v-slot:selected>
+            <q-badge
+              :color="assetStatusColor(props.row.status || 'funcional')"
+              class="text-weight-bold text-uppercase q-px-xs q-py-xs cursor-pointer"
+            >
+              {{ props.row.status || 'funcional' }}
+              <q-icon name="arrow_drop_down" size="14px" class="q-ml-xs" />
+            </q-badge>
+          </template>
+        </q-select>
       </q-td>
     </template>
 
@@ -89,7 +139,12 @@
 
 <script setup>
 import { useQuasar } from 'quasar'
-import { assetCategoryIcon } from '/src/utils/categoryStyles'
+import { useValkyrie } from '/src/composables/useValkyrie'
+import {
+  assetCategoryIcon,
+  ASSET_STATUS,
+  assetStatusColor
+} from '/src/utils/categoryStyles'
 
 defineProps({
   assets: {
@@ -98,9 +153,32 @@ defineProps({
   }
 })
 
-defineEmits(['move', 'edit', 'delete'])
+const emit = defineEmits(['move', 'edit', 'delete', 'updated'])
 
 const $q = useQuasar()
+const { updateAsset } = useValkyrie()
+
+const onStatusChange = async (asset, newStatus) => {
+  const oldStatus = asset.status
+  asset.status = newStatus // Atualização otimista na UI
+
+  try {
+    await updateAsset(asset.id, { status: newStatus })
+    $q.notify({
+      type: 'positive',
+      message: `Status alterado para "${newStatus}".`,
+      timeout: 1000
+    })
+    emit('updated')
+  } catch (error) {
+    asset.status = oldStatus // Reverte se der erro
+    console.error(error)
+    $q.notify({
+      type: 'negative',
+      message: 'Falha ao atualizar status.'
+    })
+  }
+}
 
 const columns = [
   {
@@ -115,6 +193,12 @@ const columns = [
     align: 'left',
     field: 'category'
   },
+  {
+    name: 'location',
+    label: 'LOCALIZAÇÃO',
+    align: 'left',
+    field: row => row.rooms?.name || 'Sem sala'
+  },
   { name: 'marca', label: 'MARCA/MODELO', align: 'left', field: 'brand' },
   {
     name: 'observacoes',
@@ -122,6 +206,12 @@ const columns = [
     align: 'left',
     field: 'notes',
     format: val => val || '-'
+  },
+  {
+    name: 'status',
+    label: 'STATUS',
+    align: 'center',
+    field: row => row.status || 'funcional'
   },
   { name: 'actions', label: 'AÇÕES', align: 'right' }
 ]
@@ -177,5 +267,19 @@ const columns = [
 
 .vk-delete-btn {
   color: var(--vk-danger);
+}
+
+.vk-location-chip {
+  background: var(--vk-accent-dim);
+  color: var(--vk-accent);
+}
+
+.vk-unassigned-chip {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.vk-status-select {
+  display: inline-block;
 }
 </style>

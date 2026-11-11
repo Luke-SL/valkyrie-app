@@ -145,10 +145,10 @@ export function useValkyrie() {
         supabase
           .from('assets')
           .select(
-            'id, patrimony_number, category, brand, model, room_id, rooms(name, block)'
+            'id, patrimony_number, category, brand, model, status, room_id, rooms(name, block)'
           )
           .or(
-            `patrimony_number.ilike.${term},brand.ilike.${term},model.ilike.${term},category.ilike.${term}`
+            `patrimony_number.ilike.${term},brand.ilike.${term},model.ilike.${term},category.ilike.${term},status.ilike.${term}`
           )
           .limit(6)
       ])

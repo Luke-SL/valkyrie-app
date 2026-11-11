@@ -48,3 +48,12 @@ const ASSET_ICONS = {
 export function assetCategoryIcon(category) {
   return ASSET_ICONS[category] || 'category'
 }
+
+export const ASSET_STATUS = ['funcional', 'defeituoso', 'ocioso']
+
+export const assetStatusColor = status =>
+  ({
+    funcional: 'teal-6', // Verde suave/agradável que não agride a vista
+    defeituoso: 'negative',
+    ocioso: 'warning'
+  })[status] || 'grey-6'

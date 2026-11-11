@@ -25,6 +25,16 @@
         </div>
 
         <q-form @submit.prevent="submitForm" class="q-gutter-y-md">
+          <!-- Campo de Status -->
+          <q-select
+            v-model="form.status"
+            :options="ASSET_STATUS"
+            label="Status do Equipamento"
+            outlined
+            class="vk-field"
+            :rules="[val => !!val || 'Status é obrigatório']"
+          />
+
           <div class="row q-gutter-x-md">
             <q-input
               v-model="form.brand"
@@ -101,6 +111,7 @@
 import { reactive, watch, ref } from 'vue'
 import { useValkyrie } from '/src/composables/useValkyrie'
 import { useQuasar } from 'quasar'
+import { ASSET_STATUS } from '/src/utils/categoryStyles'
 
 const props = defineProps({
   modelValue: Boolean,
@@ -126,6 +137,7 @@ const form = reactive({
   id: '',
   patrimony_number: '',
   category: '',
+  status: 'funcional',
   brand: '',
   model: '',
   os_installed: [],
@@ -142,6 +154,7 @@ watch(
       form.id = props.asset.id
       form.patrimony_number = props.asset.patrimony_number
       form.category = props.asset.category
+      form.status = props.asset.status || 'em funcionamento'
       form.brand = props.asset.brand || ''
       form.model = props.asset.model || ''
       form.os_installed = props.asset.os_installed
@@ -159,6 +172,7 @@ const submitForm = async () => {
   loading.value = true
   try {
     await updateAsset(form.id, {
+      status: form.status,
       brand: form.brand.trim() || 'Genérico',
       model: form.model ? form.model.trim() : null,
       os_installed:
